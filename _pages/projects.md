@@ -1,10 +1,10 @@
 ---
 layout: archive
 permalink: /projects/
-title: "Projects Posts by Tag"
+title: "Project Posts by Tag"
 author_profile: true
 header:
-  image: 
+  image: "/images/frontRange.jpg"
 ---
 
 {% include base_path %}

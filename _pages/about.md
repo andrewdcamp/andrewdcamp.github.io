@@ -2,6 +2,6 @@
 title: "About"
 permalink: /about/
 header:
-  image:
+  image: "/images/tree.jpg"
 ---
 I'm Andrew
