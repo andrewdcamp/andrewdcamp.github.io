@@ -1,7 +1,7 @@
 ---
 layout: posts
 permalink: /projects/
-title: "Project Posts by Tag"
+title: "Project Posts"
 author_profile: true
 header:
   image: "/images/frontRange.jpg"
