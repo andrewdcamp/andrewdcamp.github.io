@@ -40,27 +40,63 @@ To create the input matrix, we create *similarity* matrices for each of our memb
 
 The three independent matrices are then added to create a cumulative similarity matrix between all members.
 
-Since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can invert our logic and use the similarity scores as distance scores to cluster “backwards”.
+Since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can invert our logic and use the similarity scores as distance scores to cluster.
 
 ###Taking a look at the clustered output:
-Groups/clusters are mostly even. 16 members in each – a few groups with 15 members, which is acceptable given our goals.
+Groups/clusters are even. 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
+
+| Cluster| Count|
+|-------:|-----:|
+|       1|    16|
+|       2|    16|
+|       3|    16|
+|       4|    16|
+|       5|    16|
+|       6|    16|
+|     ...|   ...|
+|      36|    16|
 
 The average and standard deviation of our attributes by group show that members are evenly “mixed up” by their attributes.
+
+Aggregating the input data, we can view the percentage of members in each age group
+```r
+    pctAge<-CGInput %>%
+      group_by(AgeGroup) %>%
+      summarise(pct = round(n()/nrow(CGInput),2)) %>%
+      mutate(Ideal.Per.Cluster=round((pct*nrow(CGInput)/(nrow(CGInput)/16)),0))
+```
+
+|AgeGroup                |  pct| Ideal.Per.Cluster|
+|:-----------------------|----:|-----------------:|
+|1900-1945(Builders)     | 0.06|                 1|
+|1946-1964(Boomers)      | 0.44|                 7|
+|1965-1980(Generation X) | 0.39|                 6|
+|1981-2000(Millennials)  | 0.11|                 2|
+
+Then, aggregating our results, we can compare the average AgeGroup count per cluster to the ideal numbers above.
+
+|AgeGroup                |  ave| max| min|
+|:-----------------------|----:|---:|---:|
+|1900-1945(Builders)     | 1.19|   2|   1|
+|1946-1964(Boomers)      | 6.97|   8|   5|
+|1965-1980(Generation X) | 6.28|   9|   5|
+|1981-2000(Millennials)  | 1.72|   2|   1|
 
 We now have groups that meet our criteria very effectively. Now we need to assign an ideal leader to each group.
 
 ### Leader Assignment
-A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “fake” leaders (Leader_1, Leader_2, …) to our list to replace later, and if there are more leaders than n groups, we will only use the first `n` leaders for `n` clusters.
+A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “fake” leaders (Leader_1, Leader_2, …) to our list for a user to replace later, and if there are more leaders than `n` groups, we will only use the first `n` leaders
 
 We use a linear programming approach - the assignment problem - to place our leaders with a group. Cost of assigning a leader to a group (cluster) is defined by the number of individuals in the group who had a particular leader last year. This cost info is defined in a cost matrix like the one below.
 Fake leaders are scaled by 10x to avoid precedence issues with actual leaders.
 Using the `lpsolve` library we formulate a model to minimize the overall cost by assigning one leader to each group.
 
-Results show that 0 individuals will have the same leader as last year. Excellent! This checks the box on each of our criteria.
 ```r
     lpassign$objval
     [1] 0
 ```
+Results show that **0** individuals will have the same leader as last year. Excellent! This checks the box on each of our criteria.
+
 The solution is put together in an [R Shiny application](https://adcamp.shinyapps.io/group_assignment/) accessible from a web browser. A user can upload relevant files, and download the results.
 
 The overall process is very quick – much better than multiple days rearranging index cards.
