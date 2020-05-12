@@ -20,17 +20,18 @@ This sounded like a job for technology to me, so I offered to try to put somethi
 ### The data:
 The non-profit has an internal system where sign up data with the list of the upcoming year’s members can be found along with their denomination, age group, and their leader from last year.
 
-| CoreGroupLeader    | AgeGroup                | Name              | Denomination       |
-|:-------------------|:------------------------|:------------------|:-------------------|
-| Stevens, Elizabeth | 1946-1964(Boomers)      | Kissell, Samantha | Catholic           |
-| Olsen, Zoe         | 1965-1980(Generation X) | Winkler, Selena   | Catholic           |
-| Zordel, Linden     | 1946-1964(Boomers)      | Laouar, Jaymin    | Non Denominational |
-| Speakman, Rebecca  | 1965-1980(Generation X) | Nicolls, Sarah    | Non Denominational |
-| Chapman, Sarah     | 1965-1980(Generation X) | Fort, Kristyn     | Methodist          |
+The data has been pseudonymized to keep personal info private.
+
+| Name              | AgeGroup                | Denomination       | CoreGroupLeader    |
+|:------------------|:------------------------|:-------------------|:-------------------|
+| Kissell, Samantha | 1946-1964(Boomers)      | Catholic           | Stevens, Elizabeth |
+| Winkler, Selena   | 1965-1980(Generation X) | Catholic           | Olsen, Zoe         |
+| Laouar, Jaymin    | 1946-1964(Boomers)      | Non Denominational | Zordel, Linden     |
+| Nicolls, Sarah    | 1965-1980(Generation X) | Non Denominational | Speakman, Rebecca  |
+| Fort, Kristyn     | 1965-1980(Generation X) | Methodist          | Chapman, Sarah     |
 
 ## Problem solving approach:
-### Clean the data
-### Assign groups
+### Assign groups:
 Clustering is a great way to organize data into groups, though most clustering algorithms are not designed to deliver same-size clusters. I found an excellent comparison of same size clustering methods from [this post](http://jmonlong.github.io/Hippocamplus/2018/06/09/cluster-same-size/) and after trying out a few approaches, modified the hierarchical bottom clustering approach to fit my needs.
 
 The function accepts a distance matrix as an input and follows an iterative approach to place data into groups given a cluster size.
@@ -41,7 +42,7 @@ The three independent matrices are then added to create a cumulative similarity 
 
 Since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can invert our logic and use the similarity scores as distance scores to cluster “backwards”.
 
-**Taking a look at the clustered output:**
+###Taking a look at the clustered output:
 Groups/clusters are mostly even. 16 members in each – a few groups with 15 members, which is acceptable given our goals.
 
 The average and standard deviation of our attributes by group show that members are evenly “mixed up” by their attributes.
@@ -49,14 +50,17 @@ The average and standard deviation of our attributes by group show that members 
 We now have groups that meet our criteria very effectively. Now we need to assign an ideal leader to each group.
 
 ### Leader Assignment
-A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “fake” leaders (Leader_1, Leader_2, …) to our list to replace later, and if there are more leaders than n groups, we will only use the first n leaders.
+A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “fake” leaders (Leader_1, Leader_2, …) to our list to replace later, and if there are more leaders than n groups, we will only use the first `n` leaders for `n` clusters.
 
 We use a linear programming approach - the assignment problem - to place our leaders with a group. Cost of assigning a leader to a group (cluster) is defined by the number of individuals in the group who had a particular leader last year. This cost info is defined in a cost matrix like the one below.
 Fake leaders are scaled by 10x to avoid precedence issues with actual leaders.
 Using the `lpsolve` library we formulate a model to minimize the overall cost by assigning one leader to each group.
 
 Results show that 0 individuals will have the same leader as last year. Excellent! This checks the box on each of our criteria.
-
-The solution is put together in an [R Shiny application](https://adcamp.shinyapps.io/group_assignment/) accessible from a web browser. A user can upload relevant files, review the summary statistics and download the results.
+```r
+    lpassign$objval
+    [1] 0
+```
+The solution is put together in an [R Shiny application](https://adcamp.shinyapps.io/group_assignment/) accessible from a web browser. A user can upload relevant files, and download the results.
 
 The overall process is very quick – much better than multiple days rearranging index cards.
