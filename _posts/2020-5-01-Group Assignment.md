@@ -12,22 +12,30 @@ One of my family members is a director for a non-profit Houston area women’s b
 
 This sounded like a job for technology to me, so I offered to try to put something together to automate the effort.
 
-## Here are the rules:
+### Here are the rules:
 * The groups must be as close to 16 people as possible (one over or under is okay) with a single leader assigned to each
 + The ideal assignment would “mix up” the members by various attributes so each group has as little in common as possible
 - If members participated the year before, they should ideally have a different group leader this year
 
-## The data:
+### The data:
 The non-profit has an internal system where sign up data with the list of the upcoming year’s members can be found along with their denomination, age group, and their leader from last year.
+
+| CoreGroupLeader    | AgeGroup                | Name              | Denomination       |
+|:-------------------|:------------------------|:------------------|:-------------------|
+| Stevens, Elizabeth | 1946-1964(Boomers)      | Kissell, Samantha | Catholic           |
+| Olsen, Zoe         | 1965-1980(Generation X) | Winkler, Selena   | Catholic           |
+| Zordel, Linden     | 1946-1964(Boomers)      | Laouar, Jaymin    | Non Denominational |
+| Speakman, Rebecca  | 1965-1980(Generation X) | Nicolls, Sarah    | Non Denominational |
+| Chapman, Sarah     | 1965-1980(Generation X) | Fort, Kristyn     | Methodist          |
 
 ## Problem solving approach:
 ### Clean the data
 ### Assign groups
-I decided a clustering approach would be useful, though most clustering algorithms are not designed to deliver same-size clusters. I found an excellent comparison of same size clustering methods from this post and modified the hierarchical bottom clustering approach to fit my needs.
+Clustering is a great way to organize data into groups, though most clustering algorithms are not designed to deliver same-size clusters. I found an excellent comparison of same size clustering methods from [this post](http://jmonlong.github.io/Hippocamplus/2018/06/09/cluster-same-size/) and after trying out a few approaches, modified the hierarchical bottom clustering approach to fit my needs.
 
-The function accepts a distance matrix as an input and repeats the clustering approach multiple times, placing data points from unequal clusters into their “second best” cluster on the second iteration and so on.
+The function accepts a distance matrix as an input and follows an iterative approach to place data into groups given a cluster size.
 
-To create the input matrix, we create similarity matrices for each of our members’ attributes, providing a positive score where an attribute overlaps between two members, weighted by arbitrary importance with a bit of trial and error.
+To create the input matrix, we create *similarity* matrices for each of our members’ attributes, providing a positive score where an attribute overlaps between two members, weighted by arbitrary importance with a bit of trial and error.
 
 The three independent matrices are then added to create a cumulative similarity matrix between all members.
 
