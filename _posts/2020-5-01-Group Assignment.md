@@ -22,7 +22,7 @@ The non-profit has an internal system where sign up data with the list of the up
 
 The data has been pseudonymized to keep personal info private.
 
-| Name              | AgeGroup                | Denomination       | CoreGroupLeader    |
+| Name              | Age Group               | Denomination       | Original Leader    |
 |:------------------|:------------------------|:-------------------|:-------------------|
 | Kissell, Samantha | 1946-1964(Boomers)      | Catholic           | Stevens, Elizabeth |
 | Winkler, Selena   | 1965-1980(Generation X) | Catholic           | Olsen, Zoe         |
@@ -64,7 +64,7 @@ Since we are aiming to group our members together based on dissimilarity, and th
 Groups/clusters are even. 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
 
 
-| Cluster|Name               |CoreGroupLeader  |AgeGroup                |Denomination     |
+| Cluster|Name               |Original Leader  |Age Group               |Denomination     |
 |-------:|:------------------|:----------------|:-----------------------|:----------------|
 |       1|Adams, Olivia      |Monson, Shauna   |1981-2000(Millennials)  |Methodist        |
 |      26|Adcock, Lillian    |Odalen, Brittany |1965-1980(Generation X) |Methodist        |
@@ -89,7 +89,7 @@ Groups/clusters are even. 16 members in each – testing with different data has
 Aggregating the input data, we can view the percentage of members in each age group. Then, aggregating our results, we can compare the average AgeGroup count per cluster to the ideal numbers above. It's highly unlikely that the ideal will be reached, but the comparison provides a sanity check that our approach is working. The same trend holds true for each of our attributes.
 
 
-|AgeGroup                |  pct| Ideal Per Cluster| Average Per Cluster |
+|Age Group               |  pct| Ideal Per Cluster| Average Per Cluster |
 |:-----------------------|----:|-----------------:|--------------------:|
 |1900-1945(Builders)     | 0.06|                 1|                 1.19|
 |1946-1964(Boomers)      | 0.44|                 7|                 6.97|
@@ -130,7 +130,7 @@ Results show that **0** individuals will have the same leader as last year. Exce
 
 We now have clustered groups with an ideal leader assigned to each. This checks the boxes on our goals.
 
-| Cluster|Name               |CoreGroupLeader       |AgeGroup                |Denomination |Leader            |
+| Cluster|Name               |Original Leader       |Age Group               |Denomination |Leader            |
 |-------:|:------------------|:---------------------|:-----------------------|:------------|:-----------------|
 |       1|Adams, Olivia      |Monson, Shauna        |1981-2000(Millennials)  |Methodist    |Williams, Rebecca |
 |       1|Doyle, Kortney     |Garrett, Kyla         |1965-1980(Generation X) |Baptist      |Williams, Rebecca |
@@ -142,4 +142,4 @@ We now have clustered groups with an ideal leader assigned to each. This checks 
 
 The solution is put together in an [R Shiny application](https://adcamp.shinyapps.io/group_assignment/) accessible from a web browser. A user can upload relevant files, and download the results.
 
-The overall process is very quick – much better than multiple days rearranging index cards.
+The overall process for the user is very quick – much better than multiple days rearranging index cards.
