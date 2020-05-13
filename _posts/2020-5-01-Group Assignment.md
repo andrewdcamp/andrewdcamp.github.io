@@ -36,14 +36,43 @@ Clustering is a great way to organize data into groups, though most clustering a
 
 The function accepts a distance matrix as an input and follows an iterative approach to place data into groups given a cluster size.
 
-To create the input matrix, we create *similarity* matrices for each of our members’ attributes, providing a positive score where an attribute overlaps between two members, weighted by arbitrary importance with a bit of trial and error.
+To create the input matrix, we create *similarity* matrices for each of our members’ attributes, providing a positive score where an attribute overlaps between two members, weighted by arbitrary importance.
+
+
+|                   |Adcock, Lillian |Albro, Claire |Alexander, Sabryna |Allen, Arielle |
+|:------------------|:---------------|:-------------|:------------------|:--------------|
+|Adams, Olivia      |0               |0             |0                  |0              |
+|Adcock, Lillian    |                |0             |5                  |5              |
+|Albro, Claire      |                |              |0                  |0              |
+|Alexander, Sabryna |                |              |                   |5              |
+
 
 The three independent matrices are then added to create a cumulative similarity matrix between all members.
 
-Since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can invert our logic and use the similarity scores as distance scores to cluster.
 
-###Taking a look at the clustered output:
+|                   |Adcock, Lillian |Albro, Claire |Alexander, Sabryna |Allen, Arielle |
+|:------------------|:---------------|:-------------|:------------------|:--------------|
+|Adams, Olivia      |3               |0             |0                  |0              |
+|Adcock, Lillian    |                |0             |5                  |5              |
+|Albro, Claire      |                |              |0                  |0              |
+|Alexander, Sabryna |                |              |                   |15             |
+
+
+Since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can invert our logic and use the similarity scores as *distance* scores to cluster.
+
+### Taking a look at the clustered output:
 Groups/clusters are even. 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
+
+
+| Cluster|Name               |CoreGroupLeader  |AgeGroup                |Denomination     |
+|-------:|:------------------|:----------------|:-----------------------|:----------------|
+|       1|Adams, Olivia      |Monson, Shauna   |1981-2000(Millennials)  |Methodist        |
+|      26|Adcock, Lillian    |Odalen, Brittany |1965-1980(Generation X) |Methodist        |
+|       1|Albro, Claire      |Mingus, Crystal  |1946-1964(Boomers)      |Baptist          |
+|       1|Alexander, Sabryna |Pratt, Emilee    |1965-1980(Generation X) |Lutheran         |
+|      32|Allen, Arielle     |Pratt, Emilee    |1965-1980(Generation X) |Church Of Christ |
+|      26|Althoff, Holly     |Clark, Taylor    |1946-1964(Boomers)      |Baptist          |
+
 
 | Cluster| Count|
 |-------:|-----:|
@@ -56,46 +85,60 @@ Groups/clusters are even. 16 members in each – testing with different data has
 |     ...|   ...|
 |      36|    16|
 
-The average and standard deviation of our attributes by group show that members are evenly “mixed up” by their attributes.
 
-Aggregating the input data, we can view the percentage of members in each age group
-```r
-    pctAge<-CGInput %>%
-      group_by(AgeGroup) %>%
-      summarise(pct = round(n()/nrow(CGInput),2)) %>%
-      mutate(Ideal.Per.Cluster=round((pct*nrow(CGInput)/(nrow(CGInput)/16)),0))
-```
+Aggregating the input data, we can view the percentage of members in each age group. Then, aggregating our results, we can compare the average AgeGroup count per cluster to the ideal numbers above. It's highly unlikely that the ideal will be reached, but the comparison provides a sanity check that our approach is working. The same trend holds true for each of our attributes.
 
-|AgeGroup                |  pct| Ideal.Per.Cluster|
-|:-----------------------|----:|-----------------:|
-|1900-1945(Builders)     | 0.06|                 1|
-|1946-1964(Boomers)      | 0.44|                 7|
-|1965-1980(Generation X) | 0.39|                 6|
-|1981-2000(Millennials)  | 0.11|                 2|
 
-Then, aggregating our results, we can compare the average AgeGroup count per cluster to the ideal numbers above.
+|AgeGroup                |  pct| Ideal Per Cluster| Average Per Cluster |
+|:-----------------------|----:|-----------------:|--------------------:|
+|1900-1945(Builders)     | 0.06|                 1|                 1.19|
+|1946-1964(Boomers)      | 0.44|                 7|                 6.97|
+|1965-1980(Generation X) | 0.39|                 6|                 6.28|
+|1981-2000(Millennials)  | 0.11|                 2|                 1.72|
 
-|AgeGroup                |  ave| max| min|
-|:-----------------------|----:|---:|---:|
-|1900-1945(Builders)     | 1.19|   2|   1|
-|1946-1964(Boomers)      | 6.97|   8|   5|
-|1965-1980(Generation X) | 6.28|   9|   5|
-|1981-2000(Millennials)  | 1.72|   2|   1|
 
-We now have groups that meet our criteria very effectively. Now we need to assign an ideal leader to each group.
+We now have evenly sized groups that are effectively *mixed up* or clustered by dissimilarity. Next we need to assign an ideal leader to each group.
 
 ### Leader Assignment
-A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “fake” leaders (Leader_1, Leader_2, …) to our list for a user to replace later, and if there are more leaders than `n` groups, we will only use the first `n` leaders
+A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “dummy” leaders (*Leader_1, Leader_2, …*) to our list for a user to replace later, and if there are more leaders than `n` clusters, we will only use the first `n` leaders
 
 We use a linear programming approach - the assignment problem - to place our leaders with a group. Cost of assigning a leader to a group (cluster) is defined by the number of individuals in the group who had a particular leader last year. This cost info is defined in a cost matrix like the one below.
-Fake leaders are scaled by 10x to avoid precedence issues with actual leaders.
+
+|               |11 |18 |21 |28 |31 |34 |36 |
+|:--------------|:--|:--|:--|:--|:--|:--|:--|
+|Adler, Shelby  |1  |1  |1  |0  |1  |1  |0  |
+|Brown, Hannah  |   |0  |0  |1  |0  |0  |0  |
+|Chapman, Sarah |   |   |1  |1  |1  |1  |1  |
+|Cheney, Amanda |   |   |   |1  |0  |0  |0  |
+|Clark, Taylor  |   |   |   |   |0  |0  |0  |
+|Gaito, Sophia  |   |   |   |   |   |1  |1  |
+|Garrett, Kyla  |   |   |   |   |   |   |0  |
+
+
 Using the `lpsolve` library we formulate a model to minimize the overall cost by assigning one leader to each group.
 
 ```r
-    lpassign$objval
+    lpassign <- lp.assign(LeaderMtrx, direction = "min")
+```
+
+Results show that **0** individuals will have the same leader as last year. Excellent!
+
+```r
+    > lpassign$objval
     [1] 0
 ```
-Results show that **0** individuals will have the same leader as last year. Excellent! This checks the box on each of our criteria.
+
+We now have clustered groups with an ideal leader assigned to each. This checks the boxes on our goals.
+
+| Cluster|Name               |CoreGroupLeader       |AgeGroup                |Denomination |Leader            |
+|-------:|:------------------|:---------------------|:-----------------------|:------------|:-----------------|
+|       1|Adams, Olivia      |Monson, Shauna        |1981-2000(Millennials)  |Methodist    |Williams, Rebecca |
+|       1|Doyle, Kortney     |Garrett, Kyla         |1965-1980(Generation X) |Baptist      |Williams, Rebecca |
+|       1|Albro, Claire      |Mingus, Crystal       |1946-1964(Boomers)      |Baptist      |Williams, Rebecca |
+|       1|Alexander, Sabryna |Pratt, Emilee         |1965-1980(Generation X) |Lutheran     |Williams, Rebecca |
+|       1|Jeranko, Shianne   |Chapman, Sarah        |1946-1964(Boomers)      |Baptist      |Williams, Rebecca |
+|       1|Strauch, Tyler     |Hristopoulos, Harmony |1946-1964(Boomers)      |Baptist      |Williams, Rebecca |
+
 
 The solution is put together in an [R Shiny application](https://adcamp.shinyapps.io/group_assignment/) accessible from a web browser. A user can upload relevant files, and download the results.
 
