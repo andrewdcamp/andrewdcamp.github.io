@@ -12,15 +12,16 @@ One of my family members is a director for a non-profit Houston area women’s b
 
 This sounded like a job for technology to me, so I offered to try to put something together to automate the effort.
 
-### Here are the rules:
+### Here are the rules
 * The groups must be as close to 16 people as possible (one over or under is okay) with a single leader assigned to each
 + The ideal assignment would “mix up” the members by various attributes so each group has as little in common as possible
 - If members participated the year before, they should ideally have a different group leader this year
 
-### The data:
+### The data
 The non-profit has an internal system where sign up data with the list of the upcoming year’s members can be found along with their denomination, age group, and their leader from last year.
 
 The data has been pseudonymized to keep personal info private.
+
 
 | Name              | Age Group               | Denomination       | Original Leader    |
 |:------------------|:------------------------|:-------------------|:-------------------|
@@ -30,8 +31,9 @@ The data has been pseudonymized to keep personal info private.
 | Nicolls, Sarah    | 1965-1980(Generation X) | Non Denominational | Speakman, Rebecca  |
 | Fort, Kristyn     | 1965-1980(Generation X) | Methodist          | Chapman, Sarah     |
 
-## Problem solving approach:
-### Assign groups:
+
+## Problem solving approach
+### Assign groups
 Clustering is a great way to organize data into groups, though most clustering algorithms are not designed to deliver same-size clusters. I found an excellent comparison of same size clustering methods from [this post](http://jmonlong.github.io/Hippocamplus/2018/06/09/cluster-same-size/) and after trying out a few approaches, modified the hierarchical bottom clustering approach to fit my needs.
 
 The function accepts a distance matrix as an input and follows an iterative approach to place data into groups given a cluster size.
@@ -60,9 +62,7 @@ The three independent matrices are then added to create a cumulative similarity 
 
 Since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can invert our logic and use the similarity scores as *distance* scores to cluster.
 
-### Taking a look at the clustered output:
-Groups/clusters are even. 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
-
+### Taking a look at the clustered output
 
 | Cluster|Name               |Original Leader  |Age Group               |Denomination     |
 |-------:|:------------------|:----------------|:-----------------------|:----------------|
@@ -72,6 +72,9 @@ Groups/clusters are even. 16 members in each – testing with different data has
 |       1|Alexander, Sabryna |Pratt, Emilee    |1965-1980(Generation X) |Lutheran         |
 |      32|Allen, Arielle     |Pratt, Emilee    |1965-1980(Generation X) |Church Of Christ |
 |      26|Althoff, Holly     |Clark, Taylor    |1946-1964(Boomers)      |Baptist          |
+
+
+Groups/clusters are even. 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
 
 
 | Cluster| Count|
@@ -103,6 +106,7 @@ We now have evenly sized groups that are effectively *mixed up* or clustered by 
 A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “dummy” leaders (*Leader_1, Leader_2, …*) to our list for a user to replace later, and if there are more leaders than `n` clusters, we will only use the first `n` leaders
 
 We use a linear programming approach - the assignment problem - to place our leaders with a group. Cost of assigning a leader to a group (cluster) is defined by the number of individuals in the group who had a particular leader last year. This cost info is defined in a cost matrix like the one below.
+
 
 |               |11 |18 |21 |28 |31 |34 |36 |
 |:--------------|:--|:--|:--|:--|:--|:--|:--|
