@@ -2,7 +2,7 @@
 title: "About"
 permalink: /about/
 header:
-  image: "/images/tree.jpg"
+  image: "/images/tracks.jpg"
 ---
 Hello! I'm Andrew, a creative thinker, technology professional and data enthusiast.  I've spent the last few years improving processes and practicing data science skills. My interests include machine learning, operations research and data visualization.
 
