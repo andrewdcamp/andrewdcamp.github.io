@@ -82,6 +82,61 @@ To solve the problem we can formulate a linear optimization model. A modeling la
     df = CSV.read(f, DataFrame)
     nms = df.Name
     attrMx = Matrix(select(df, Not(:Name)))
+
+    # input parameters
+    Group_size = 5
+    N_People = floor(Int,size(df, 1))
+    N_Groups = floor(Int,N_People/Group_size)
+    AttrVecSize = floor(Int, size(df, 2) - 1)
+
+    # create Model
+    #m = Model(solver=GurobiSolver())
+    m = Model(Cbc.Optimizer)
+    #m = Model(Ipopt.Optimizer)
+
+    # create vars
+    @variable(m, y[1:N_Groups,1:N_People], Bin)
+    @variable(m, g[1:N_Groups,1:AttrVecSize])
+    @variable(m, dist[1:N_Groups, 1:N_Groups, 1:AttrVecSize] >= 0)
+    @variable(m, s1 >=0)
+    @variable(m, s2 >=0)
+
+    # group stat defintions
+    for yRow in 1:size(y, 1)
+        for mxCol in 1:size(attrMx, 2)
+            @constraint(m, g[yRow, mxCol] == sum(y[yRow,:].*attrMx[:,mxCol]))
+        end
+    end
+
+    # distance metric defintion
+    for i in 1:AttrVecSize
+        for j in 1:N_Groups
+            for k in 1:N_Groups
+                if j < k
+                    @constraint(m, g[j, i] - g[k, i] <= dist[j, k, i])
+                    @constraint(m, g[k, i] - g[j, i] <= dist[k, j, i])
+                end
+            end
+        end
+    end
+
+    # group size with slack vars
+    for i in 1:N_Groups
+       @constraint(m, sum(y[:,i]) <= (Group_size+s1)) # people assigned to each group < group size
+       @constraint(m, sum(y[:,i]) >= (Group_size-s2))
+    end
+
+    # each person only one group constraints
+    #for j in N_Groups
+    for i in 1:N_People
+        @constraint(m, sum(y[:,i]) == 1)
+    end
+
+    # objective
+
+    #@objective(m, Min, sum(((g[j, i] - g[k, i])^2) for i=1:AttrVecSize,j=1:N_Groups, k=1:N_Groups) + s1 + s2)
+    @objective(m, Min, sum(dist[i, j, k] for i=1:N_Groups,j=1:N_Groups, k=1:AttrVecSize) + 5*s1 + 5*s2)
+
 ```
 
 To solve our model, we can choose any one of the numerous available commercial or open source solvers supported by JuMP. My top choice for an open source solver is the COIN OR CBC solver. I happen to have a license for the commercial Gurobi solver as well. Switching the solver in JuMP is very easy, so I'll try out both solvers to see if the performance differs.
