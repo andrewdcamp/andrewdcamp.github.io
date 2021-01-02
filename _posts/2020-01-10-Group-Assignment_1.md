@@ -19,20 +19,11 @@ This sounded like a job for technology to me, so I offered to put something toge
 
 ## Problem solving approach
 ### Maximizing diversity
-There are several ways we could approach measuring difference within each group. Instead of maximizing the differences within each group, we can alternatively choose to minimize the difference in composition between all groups. I.e. when all groups are relatively similar in composition, our individuals will be effectively "mixed up."
+There are several ways we could approach measuring difference within each group. Instead of maximizing the differences within each group, we can alternatively choose to minimize the difference in composition between each group and a calulcated "ideal" number for each group. I.e. when all groups are relatively similar in composition, our individuals will be effectively "mixed up".
 
 ### Formulating an approach
 Each individual will be assigned a one hot coded vector to represent their respective attributes.
 To measure a group's composition, each group will have a statistic representing the sum of vectors of individuals assigned to the group.
-
-The task of our model will be to choose which individuals are assigned to each group in order to minimize the difference in composition between all groups. We can achieve this by minimizing the sum of the L1 norm (Manhattan or Taxicab distance) between each pair of group statistics. Of course we still need to obey the group size constraints.
-
-A sketch of this representation:
-
-In more concrete terms, we can formulate the problem as follows:
-
-### Linearization
-Manhattan distance takes the sum of absolute values of distances between vectors. Absolute value is non-linear and therefore we cannot directly implement our objective function via linear programming. To get around this issue, we need to linearize our objective using the approach below:
 
 ### The data
 The non-profit has an internal system where sign up data with the list of the upcoming year’s members can be found along with their denomination, age group, and their leader from last year.
@@ -47,6 +38,7 @@ The data has been pseudonymized to keep personal info private.
 | Nicolls, Sarah    | 1965-1980(Generation X) | Non Denominational | Speakman, Rebecca  |
 | Fort, Kristyn     | 1965-1980(Generation X) | Methodist          | Chapman, Sarah     |
 
+For input data prep and analysis of the model results, I've chosen to use Python. Julia is more than capable of handling this, but personally I can get the job done quicker with Python.
 
 We can one hot encode each individuals attributes to construct a vector describing each of them.
 
@@ -70,6 +62,19 @@ We can one hot encode each individuals attributes to construct a vector describi
     df_oneHot.to_csv("/Users/andrewcamp/Documents/Python/CoreGroupOpt/df_optInput.csv", index = False)
 
 ```
+
+The task of our model will be to choose which individuals are assigned to each group in order to minimize the difference in composition between all groups. We can achieve this by minimizing the sum of the L1 norm (Manhattan or Taxicab distance) between each group statistic and a calculated vector of ideal attribute counts. Of course we still need to obey the group size constraints.
+
+A sketch of this representation:
+
+In more concrete terms, we can formulate the problem as follows:
+
+
+### Linearization
+Manhattan distance takes the sum of absolute values of distances between vectors. Absolute value is non-linear and therefore we cannot directly implement our objective function via linear programming. To get around this issue, we need to linearize our objective using the approach below:
+
+### Slack variables
+We want our groups to be as close to our specified group size as possible, but we will inevitably have a few extra individuals left over. Rather than forcing an exact group size constraint, we add the slack variables s1 and s2 to allow the model to place extra individuals somewhere, but we add our slack variables to the objective with coefficients of 1000 to make sure the model has a strong preference for equal sized groups.
 
 ### Model implementation
 To solve the problem we can formulate a linear optimization model. A modeling language and external solver are needed to build and solve the model. There are numerous tools in various languages for LP modeling. My favorite is Julia's JuMP package, which I've used here to formulate the LP.
@@ -139,9 +144,22 @@ To solve the problem we can formulate a linear optimization model. A modeling la
 
 ```
 
-To solve our model, we can choose any one of the numerous available commercial or open source solvers supported by JuMP. My top choice for an open source solver is the COIN OR CBC solver. I happen to have a license for the commercial Gurobi solver as well. Switching the solver in JuMP is very easy, so I'll try out both solvers to see if the performance differs.
+To solve our model, we can choose any one of the numerous available commercial or open source solvers supported by JuMP. My top choice for an open source solver is the COIN OR CBC solver.
+
+### Solving the model
+Trying out a test case, we build the model to group 160 individuals into 10 groups of 16.
+Solving the model we get a solution in about one second.
+
+However with 300 people, our model takes a very long time to solve and if we add our third attribute - original leader into our attribute vectors, the model does not even solve with 160 people...
 
 ### Model output
-With 50 individuals we get a solution from CBC rather quickly.
+The Good News:
+With a test case of 160 individuals we get a solution from CBC rather quickly. Plots of the attribute count in each group are shown below. Notice that due to overlapping attributes (2 per person) the attribute counts are not perfectly even, but we can see that the count is relatively uniform across all groups. Great! - this is what we want.
 
-For input data prep and analysis of the model results, I've chosen to use Python. Julia is more than capable of handling this, but personally I can get the job done quicker with Python.
+The Bad News:
+When we try to group 300+ individuals, the solver really struggles to solve the model. Even with a few reformulations of the model I could not get a solution in a reasonable amount of time. With heuristics or more advanced optimization methods, it may be possible to solve this problem, but I ultimately decided to scrap the LP and start over with a clustering approach in R which you can read about in Part II of this post.
+
+###Concluding thoughts
+Though I was a bit disappointed not to solve this problem on the first try, though even in academic literature this type of grouping problem is nowhere near trivial. This was a great exercise in implementing a mathematical formulation to solve a real problem and I've become a big fan of using JuMP optimization modeling.
+
+Check out Part II of this post to read about the alternative solution using clustering in R. (Spoiler - the second approach was successful)
