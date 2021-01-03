@@ -165,7 +165,7 @@ With a test case of 160 individuals we get a solution from CBC rather quickly. P
 |      10|    16|
 
 image:
-<img src="{{ site.url }}{{ site.baseurl }}/images/Project1/160_agegroup_plot.jpg" alt="Plot 1">
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/160_agegroup_plot.jpg" alt="Plot 1">
 
 The Bad News:
 When we try to group 300+ individuals, the solver really struggles to solve the model. Even with a few reformulations of the model I could not get a solution in a reasonable amount of time. With heuristics or more advanced optimization methods, it may be possible to solve this problem, but I ultimately decided to scrap the LP and start over with a clustering approach in R which you can read about in Part II of this post.

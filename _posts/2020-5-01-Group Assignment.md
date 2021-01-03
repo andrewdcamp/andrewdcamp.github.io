@@ -12,6 +12,8 @@ One of my family members is a director for a non-profit Houston area women’s b
 
 This sounded like a job for technology to me, so I offered to try to put something together to automate the effort.
 
+This is an alternative approach to the solution in part 1 of this project, where I attempted to used linear programming to solve the same problem.
+
 ### Here are the rules
 * The groups must be as close to 16 people as possible (one over or under is okay) with a single leader assigned to each
 + The ideal assignment would “mix up” the members by various attributes so each group has as little in common as possible
@@ -33,12 +35,12 @@ The data has been pseudonymized to keep personal info private.
 
 
 ## Problem solving approach
-### Assign groups
+### Assigning groups
 Clustering is a great way to organize data into groups, though most clustering algorithms are not designed to deliver same-size clusters. I found an excellent comparison of same size clustering methods from [this post](http://jmonlong.github.io/Hippocamplus/2018/06/09/cluster-same-size/) and after trying out a few approaches, modified the hierarchical bottom clustering approach to fit my needs.
 
 The function accepts a distance matrix as an input and follows an iterative approach to place data into groups given a cluster size.
 
-To create the input matrix, we create *similarity* matrices for each of our members’ attributes, providing a positive score where an attribute overlaps between two members, weighted by arbitrary importance.
+To create the input matrix, we create *similarity* matrices for each of our members’ attributes, providing a positive score where an attribute overlaps between two members, weighted by arbitrary importance. I.e. if two people are in the same age group we add a value to their similarity score.
 
 
 |                   |Adcock, Lillian |Albro, Claire |Alexander, Sabryna |Allen, Arielle |
@@ -60,9 +62,14 @@ The three independent matrices are then added to create a cumulative similarity 
 |Alexander, Sabryna |                |              |                   |15             |
 
 
-Since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can invert our logic and use the similarity scores as *distance* scores to cluster.
+We now have similarity measures for our individuals, but since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can just reverse our logic and use the similarity scores as *distance* scores. I.e. we want to cluster the data such that the most similar individuals are as far apart as possible.
 
-### Taking a look at the clustered output
+### Clustering
+Approach
+
+We get a result with 400+ members in a matter of a few seconds.
+
+### Taking a look at the output
 
 | Cluster|Name               |Original Leader  |Age Group               |Denomination     |
 |-------:|:------------------|:----------------|:-----------------------|:----------------|
@@ -74,7 +81,7 @@ Since we are aiming to group our members together based on dissimilarity, and th
 |      26|Althoff, Holly     |Clark, Taylor    |1946-1964(Boomers)      |Baptist          |
 
 
-Groups/clusters are even. 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
+Groups/clusters are even - 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
 
 
 | Cluster| Count|
@@ -100,12 +107,13 @@ Aggregating the input data, we can view the percentage of members in each age gr
 |1981-2000(Millennials)  | 0.11|                 2|                 1.72|
 
 
+
 We now have evenly sized groups that are effectively *mixed up* or clustered by dissimilarity. Next we need to assign an ideal leader to each group.
 
 ### Leader Assignment
-A list of this year’s leaders is provided from the non-profit’s same data system. If we have fewer leaders than groups, we can add “dummy” leaders (*Leader_1, Leader_2, …*) to our list for a user to replace later, and if there are more leaders than `n` clusters, we will only use the first `n` leaders
+We want to assign leaders to groups in a way that minimizes the number of people who have the same leader as last year.A list of this year’s leaders is provided from the non-profit’s same data system. If the list contains fewer leaders than groups for some reason, we can add “dummy” leaders (*Leader_1, Leader_2, …*) to our list for a user to replace later, and if there are more leaders on the list than `n` clusters, we will only use the first `n` leaders.
 
-We use a linear programming approach - the assignment problem - to place our leaders with a group. Cost of assigning a leader to a group (cluster) is defined by the number of individuals in the group who had a particular leader last year. This cost info is defined in a cost matrix like the one below.
+We use a well known operations research approach - the assignment problem - to place our leaders with a group. Cost of assigning a leader to a group is defined by the number of individuals in the group who had that particular leader last year. This cost info is defined in a cost matrix like the one below.
 
 
 |               |11 |18 |21 |28 |31 |34 |36 |
@@ -119,7 +127,7 @@ We use a linear programming approach - the assignment problem - to place our lea
 |Garrett, Kyla  |   |   |   |   |   |   |0  |
 
 
-Using the `lpsolve` library we formulate a model to minimize the overall cost by assigning one leader to each group.
+The `lpsolve` library has a very nice function for solving the assignment problem without manually formulating the model. Here we define a model to minimize the overall cost by assigning one leader to each group.
 
 ```r
     lpassign <- lp.assign(LeaderMtrx, direction = "min")
@@ -132,7 +140,8 @@ Results show that **0** individuals will have the same leader as last year. Exce
     [1] 0
 ```
 
-We now have clustered groups with an ideal leader assigned to each. This checks the boxes on our goals.
+### Results
+We now have clustered groups with an ideal leader assigned to each. This checks the boxes on our goals!
 
 | Cluster|Name               |Original Leader       |Age Group               |Denomination |Leader            |
 |-------:|:------------------|:---------------------|:-----------------------|:------------|:-----------------|
@@ -145,5 +154,7 @@ We now have clustered groups with an ideal leader assigned to each. This checks 
 
 
 The solution is put together in an [R Shiny application](https://adcamp.shinyapps.io/group_assignment/) accessible from a web browser. A user can upload relevant files, and download the results.
+
+In comparison to the solution in part 1 of this project, this approach is simple and much more effective.
 
 The overall process for the user is very quick – much better than multiple days rearranging index cards.
