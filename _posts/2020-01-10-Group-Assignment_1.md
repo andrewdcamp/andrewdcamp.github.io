@@ -1,5 +1,5 @@
 ---
-title: "Group Assignment - Part 1"
+title: "Optimal Grouping - Part 1"
 date: "2020-05-10"
 tags: [Linear Programming, Julia]
 header:
@@ -165,7 +165,7 @@ With a test case of 160 individuals we get a solution from CBC rather quickly. W
 |      10|    16|
 
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/attrPlot.jpg" alt="Plot 1">
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/attributePlots.jpg" alt="Plot 1">
 
 The Bad News:
 When we try to group 300+ individuals, the solver really struggles to solve the model. Even with a few reformulations of the model I could not get a solution in a reasonable amount of time. With heuristics or more advanced optimization methods, it may be possible to solve this problem, but I ultimately decided to scrap the LP and start over with a clustering approach in R which you can read about in Part II of this post.

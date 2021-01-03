@@ -1,10 +1,10 @@
 ---
-title: "Group Assignment"
+title: "Optimal Grouping"
 date: "2020-05-10"
 tags: [Machine Learning, R]
 header:
   image: "/images/railroad.jpg"
-excerpt: "Using clustering and linear programming to assign members to groups"
+excerpt: "Using clustering and linear programming to assign members to groups based on multiple attributes"
 ---
 
 ## Background
