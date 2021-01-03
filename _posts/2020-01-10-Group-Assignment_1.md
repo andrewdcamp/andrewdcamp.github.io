@@ -154,7 +154,7 @@ However with 300 people, our model takes a very long time to solve and if we add
 
 ### Model output
 The Good News:
-With a test case of 160 individuals we get a solution from CBC rather quickly. Plots of the attribute count in each group are shown below. Notice that due to overlapping attributes (2 per person) the attribute counts are not perfectly even, but we can see that the count is relatively uniform across all groups. We can also see that our groups are even with 16 members in each. Great! - this is what we want.
+With a test case of 160 individuals we get a solution from CBC rather quickly. We can also see that our groups are even with 16 members in each. Plots of the attribute count in each group are shown below. Notice that due to overlapping attributes (2 per person) the attribute counts are not perfectly even, but we can see that the count is somewhat uniform across all groups - though the spikes in our barchart are a bit troubling... but this is good progress.
 
 | Group| Count|
 |-------:|-----:|
@@ -164,8 +164,8 @@ With a test case of 160 individuals we get a solution from CBC rather quickly. P
 |     ...|   ...|
 |      10|    16|
 
-image:
-<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/160_agegroup_plot.jpg" alt="Plot 1">
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/attrPlot.jpg" alt="Plot 1">
 
 The Bad News:
 When we try to group 300+ individuals, the solver really struggles to solve the model. Even with a few reformulations of the model I could not get a solution in a reasonable amount of time. With heuristics or more advanced optimization methods, it may be possible to solve this problem, but I ultimately decided to scrap the LP and start over with a clustering approach in R which you can read about in Part II of this post.
