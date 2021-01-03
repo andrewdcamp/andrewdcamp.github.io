@@ -168,9 +168,13 @@ With a test case of 160 individuals we get a solution from CBC rather quickly. W
 <img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/attributePlots.jpg" alt="Plot 1">
 
 The Bad News:
-When we try to group 300+ individuals, the solver really struggles to solve the model. Even with a few reformulations of the model I could not get a solution in a reasonable amount of time. With heuristics or more advanced optimization methods, it may be possible to solve this problem, but I ultimately decided to scrap the LP and start over with a clustering approach in R which you can read about in Part II of this post.
+When we try to group 300+ individuals, the solver really struggles to solve the model. Even with a few reformulations of the model I could not get a solution in a reasonable amount of time.
 
-###Concluding thoughts
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/cbcLongRun.png" alt="Plot 1">
+
+With heuristics or more advanced optimization methods, it may be possible to solve this problem, but I ultimately decided to scrap the LP and start over with a clustering approach in R which you can read about in Part II of this post.
+
+### Concluding thoughts
 Though I was a bit disappointed not to solve this problem on the first try, though even in academic literature this type of grouping problem is nowhere near trivial. This was a great exercise in implementing a mathematical formulation to solve a real problem and I've become a big fan of using JuMP optimization modeling.
 
 Check out Part II of this post to read about the alternative solution using clustering in R. (Spoiler - the second approach was successful)
