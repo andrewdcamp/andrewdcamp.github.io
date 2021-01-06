@@ -1,5 +1,6 @@
 ---
 title: "Optimal Grouping - Part II"
+classes: wide
 date: "2020-05-10"
 tags: [Clustering, R]
 header:
