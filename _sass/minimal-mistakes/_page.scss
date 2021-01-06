@@ -35,11 +35,6 @@ body {
   flex: 1 0 auto;
 }
 
-// .page {
-// 	@include breakpoint($large) {
-//   	width: calc(100% - #{$right-sidebar-width-narrow});
-// 	}
-
 .page {
   @include breakpoint($large) {
     float: right;
