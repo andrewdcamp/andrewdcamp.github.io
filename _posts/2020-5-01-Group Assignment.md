@@ -189,17 +189,16 @@ We get a result with 400+ members in a matter of a few seconds.
 
 Groups/clusters are even - 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
 
-
-                                               | Cluster| Count|
-                                               |-------:|-----:|
-                                               |       1|    16|
-                                               |       2|    16|
-                                               |       3|    16|
-                                               |       4|    16|
-                                               |       5|    16|
-                                               |       6|    16|
-                                               |     ...|   ...|
-                                               |      36|    16|
+| Cluster| Count|
+|-------:|-----:|
+|       1|    16|
+|       2|    16|
+|       3|    16|
+|       4|    16|
+|       5|    16|
+|       6|    16|
+|     ...|   ...|
+|      36|    16|
 
 Aggregating the input data, we can view the percentage of members in each age group. Then, aggregating our results, we can compare the average AgeGroup count per cluster to the ideal numbers above. It's highly unlikely that the ideal will be reached, but the comparison provides a sanity check that our approach is working. The same trend holds true for each of our attributes.
 
