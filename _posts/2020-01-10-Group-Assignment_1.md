@@ -1,5 +1,5 @@
 ---
-title: "Optimal Grouping - Part 1"
+title: "Optimal Grouping - Part I"
 date: "2020-05-10"
 tags: [Linear Programming, Julia]
 header:

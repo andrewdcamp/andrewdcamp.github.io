@@ -1,7 +1,7 @@
 ---
 title: "Optimal Grouping - Part II"
 date: "2020-05-10"
-tags: [Machine Learning, R]
+tags: [Clustering, R]
 header:
   image: "/images/railroad.jpg"
 excerpt: "Using clustering and linear programming to assign members to groups based on multiple attributes"
