@@ -91,7 +91,7 @@ analytics:
     anonymize_ip         : # true, false (default)
 
 
-# Site Author
+# Site Authors
 author:
   name             : "Andrew Camp"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
