@@ -124,7 +124,8 @@ DenomM<-createDistMtrx(df, 'Denomination', 3)
 
 ```
 
-Out matrices look like this
+
+Our matrices look like this:
 
 <img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/matrix_1.png" alt="Plot 2">
 
@@ -159,6 +160,7 @@ M<-matrix_add(LeaderM, AgeM) %>%
 
 We now have similarity measures for our individuals, but since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can just reverse our logic and use the similarity scores as *distance* scores. I.e. we want to cluster the data such that the most similar individuals are as far apart as possible.
 
+
 ### Clustering
 We apply the funcrion defined above, placing our members into groups of 16
 
@@ -183,9 +185,13 @@ We get a result with 400+ members in a matter of a few seconds.
 |      26|Althoff, Holly     |Clark, Taylor    |1946-1964(Boomers)      |Baptist          |
 
 
+
+
 Groups/clusters are even - 16 members in each – testing with different data has yielded a few groups with 15 members due to different member totals - which is acceptable given our goals.
 
 Aggregating the input data, we can view the percentage of members in each age group. Then, aggregating our results, we can compare the average AgeGroup count per cluster to the ideal numbers above. It's highly unlikely that the ideal will be reached, but the comparison provides a sanity check that our approach is working. The same trend holds true for each of our attributes.
+
+
 
 |Age Group               |  pct| Ideal Per Cluster| Average Per Cluster |
 |:-----------------------|----:|-----------------:|--------------------:|
@@ -202,11 +208,13 @@ We now have evenly sized groups that are effectively *mixed up* or clustered by 
 
 Next we need to assign an ideal leader to each group...
 
+
 ### Leader Assignment
 We want to assign leaders to groups in a way that minimizes the number of people who have the same leader as last year.A list of this year’s leaders is provided from the non-profit’s same data system. If the list contains fewer leaders than groups for some reason, we can add “dummy” leaders (*Leader_1, Leader_2, …*) to our list for a user to replace later, and if there are more leaders on the list than `n` clusters, we will only use the first `n` leaders.
 
 We use a well known operations research approach - the assignment problem - to place our leaders with a group. Cost of assigning a leader to a group is defined by the number of individuals in the group who had that particular leader last year.
 We read in a list of this years leaders to be assigned to groups and in combination with our dataset of grouped members, we create a distance matrix to specify costs of assigning a leader to a group.
+
 
 ```r
 LeaderInput<-read.csv('/Users/andrewcamp/Desktop/Leaders.csv')
@@ -255,17 +263,12 @@ rownames(mx)<-mx[,1]
 mx<-t(mx[,-1])
 ```
 
-Our cost matrix is defined in a similar way to the example below:
+Our cost matrix is defined like this:
 
-|               |11 |18 |21 |28 |31 |34 |36 |
-|:--------------|:--|:--|:--|:--|:--|:--|:--|
-|Adler, Shelby  |1  |1  |1  |0  |1  |1  |0  |
-|Brown, Hannah  |   |0  |0  |1  |0  |0  |0  |
-|Chapman, Sarah |   |   |1  |1  |1  |1  |1  |
-|Cheney, Amanda |   |   |   |1  |0  |0  |0  |
-|Clark, Taylor  |   |   |   |   |0  |0  |0  |
-|Gaito, Sophia  |   |   |   |   |   |1  |1  |
-|Garrett, Kyla  |   |   |   |   |   |   |0  |
+
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/cost_matrix.png" alt="Plot 3">
+
 
 
 The `lpsolve` library has a very nice function for solving the assignment problem without manually formulating the model. Here we define a model to minimize the overall cost by assigning one leader to each group.
@@ -286,6 +289,7 @@ Results show that **0** individuals will have the same leader as last year. Exce
 ### Results
 We now have clustered groups with an ideal leader assigned to each. This checks the boxes on our goals!
 
+
 | Cluster|Name               |Original Leader       |Age Group               |Denomination |Leader            |
 |-------:|:------------------|:---------------------|:-----------------------|:------------|:-----------------|
 |       1|Adams, Olivia      |Monson, Shauna        |1981-2000(Millennials)  |Methodist    |Williams, Rebecca |
@@ -294,6 +298,7 @@ We now have clustered groups with an ideal leader assigned to each. This checks 
 |       1|Alexander, Sabryna |Pratt, Emilee         |1965-1980(Generation X) |Lutheran     |Williams, Rebecca |
 |       1|Jeranko, Shianne   |Chapman, Sarah        |1946-1964(Boomers)      |Baptist      |Williams, Rebecca |
 |       1|Strauch, Tyler     |Hristopoulos, Harmony |1946-1964(Boomers)      |Baptist      |Williams, Rebecca |
+
 
 
 The solution is put together in an [R Shiny application](https://adcamp.shinyapps.io/group_assignment/) accessible from a web browser. A user can upload relevant files, and download the results.
