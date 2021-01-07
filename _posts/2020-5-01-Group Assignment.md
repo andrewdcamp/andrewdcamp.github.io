@@ -175,6 +175,7 @@ We get a result with 400+ members in a matter of a few seconds.
 
 ### Taking a look at the output
 
+
 | Cluster|Name               |Original Leader  |Age Group               |Denomination     |
 |-------:|:------------------|:----------------|:-----------------------|:----------------|
 |       1|Adams, Olivia      |Monson, Shauna   |1981-2000(Millennials)  |Methodist        |
@@ -267,7 +268,7 @@ Our cost matrix is defined like this:
 
 
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/cost_matrix.png" alt="Plot 3">
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/cost_mx.png" alt="Plot 3">
 
 
 
