@@ -124,10 +124,17 @@ DenomM<-createDistMtrx(df, 'Denomination', 3)
 
 ```
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/matrix1.png" alt="Plot 2">
+Out matrices look like this
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/matrix_1.png" alt="Plot 2">
 
 
 The three independent matrices are then added to create a cumulative similarity matrix between all members.
+
+
+<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/matrices.png" alt="Plot 3">
+
+
 
 ```r
 # combine matrix function
@@ -149,9 +156,6 @@ M<-matrix_add(LeaderM, AgeM) %>%
   matrix_add(DenomM)
 
 ```
-
-<img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/matrices.png" alt="Plot 3">
-
 
 We now have similarity measures for our individuals, but since we are aiming to group our members together based on dissimilarity, and the hierarchical clustering function accepts a distance matrix, we can just reverse our logic and use the similarity scores as *distance* scores. I.e. we want to cluster the data such that the most similar individuals are as far apart as possible.
 
