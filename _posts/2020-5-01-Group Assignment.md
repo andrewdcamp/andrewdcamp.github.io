@@ -112,6 +112,7 @@ df<-merge(df, DenomInput, by = 'HomeChurch', all.x = TRUE) %>%
 # clean blanks and NAs
 colLst<-c('AgeGroup', 'HomeChurch', 'Denomination', 'CoreGroupLeader')
 df[,colLst]<-as.data.frame(lapply(df[,colLst], function(y) sub("^$", "None", y)))
+```
 
 Now we can create independent distance matrices for each attribute.
 
