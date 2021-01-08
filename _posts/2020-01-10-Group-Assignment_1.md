@@ -156,7 +156,7 @@ However with 300 people, our model takes a very long time to solve and if we add
 The Good News:
 With a test case of 160 individuals we get a solution from CBC rather quickly. We can also see that our groups are even with 16 members in each. Plots of the attribute count in each group are shown below. Notice that due to overlapping attributes (2 per person) the attribute counts are not perfectly even, but we can see that the count is somewhat uniform across all groups - though the spikes in our barchart are a bit troubling... but this is good progress.
 
-| Group| Count|
+| Group  | Count|
 |-------:|-----:|
 |       1|    16|
 |       2|    16|

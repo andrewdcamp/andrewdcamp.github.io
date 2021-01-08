@@ -203,9 +203,30 @@ Aggregating the input data, we can view the percentage of members in each age gr
 
 *Barplot*
 
-We now have evenly sized groups that are effectively *mixed up* or clustered by dissimilarity. In part 1 of this post we attempted to solve this problem using linear programming. Comparing the results of the two approaches below, we can see a fair amount of improvement over the first try.
+We now have evenly sized groups that are effectively *mixed up* or clustered by dissimilarity. In part 1 of this post we attempted to solve this problem using linear programming. In the first attempt, we were only able to group up to 160 people, so the barplots are not a 1:1 comparison, but looking at the difference in the results of the two approaches below, we can see an obvious improvement over the first try.
 
-*barplots*
+
+<figure>
+  <img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/160_agegroup_plot.png" alt="Plot 4">
+  <figcaption>Count of members in each group by age - Part 1.</figcaption>
+</figure>
+
+<figure>
+  <img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/AgeGroupPt2.png" alt="Plot 5">
+  <figcaption>Count of members in each group by age - Part 2.</figcaption>
+</figure>
+
+<figure>
+  <img src="{{ site.url }}{{ site.baseurl }}/images/CoregroupOpt/160_denom_plot.png" alt="Plot 6">
+  <figcaption>Count of members in each group by denomination - Part 1.</figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/images/unsplash-image-10.jpg" alt="this is a placeholder image">
+  <figcaption>Count of members in each group by denomination - Part 2.</figcaption>
+</figure>
+
+
 
 Next we need to assign an ideal leader to each group...
 
